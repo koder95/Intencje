@@ -76,4 +76,8 @@ public class VirtualIntention implements pl.koder95.intencje.core.Intention {
     public void setContent(String content) {
         this.content.set(content);
     }
+
+    public RealIntention toReal() throws Exception {
+        return new RealIntention(Intention.create(getMassTime(), getChapel(), getContent()));
+    }
 }

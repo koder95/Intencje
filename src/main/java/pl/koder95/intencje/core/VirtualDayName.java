@@ -55,4 +55,8 @@ public class VirtualDayName implements pl.koder95.intencje.core.DayName {
     public StringProperty nameProperty() {
         return name;
     }
+
+    public RealDayName toReal() throws Exception {
+        return new RealDayName(DayName.create(getDate(), getName()));
+    }
 }
