@@ -1,4 +1,4 @@
-package pl.koder95.intencje.core.i;
+package pl.koder95.intencje.core;
 
 import java.time.LocalDateTime;
 
