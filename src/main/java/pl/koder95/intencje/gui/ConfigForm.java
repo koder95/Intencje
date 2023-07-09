@@ -6,13 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import pl.koder95.intencje.Paths;
-import pl.koder95.intencje.db.DB;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class ConfigForm {
 

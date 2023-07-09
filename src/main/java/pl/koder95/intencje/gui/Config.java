@@ -3,17 +3,14 @@ package pl.koder95.intencje.gui;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import pl.koder95.intencje.Paths;
-import pl.koder95.intencje.db.DB;
+import pl.koder95.intencje.core.db.DB;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
