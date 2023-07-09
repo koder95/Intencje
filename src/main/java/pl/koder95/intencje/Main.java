@@ -20,7 +20,8 @@ import java.util.Properties;
 
 public class Main extends Application {
 	
-    public static final String APP_NAME = "Intencje mszalne";
+    public static final String PARISH_NAME = "Parafia rzymskokatolicka...";
+    public static final String APP_NAME = "Intencje – " + PARISH_NAME;
     public static final int ERR_ENV_REQ = 300;
 
     @Override
