@@ -3,9 +3,17 @@ package pl.koder95.intencje;
 import javafx.application.Application;
 import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.CacheHint;
+import javafx.scene.Scene;
+import javafx.scene.control.Pagination;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pl.koder95.intencje.core.cli.CL;
 import pl.koder95.intencje.core.db.DB;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
@@ -33,6 +41,19 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Stage config = FXMLLoader.load(ClassLoader.getSystemResource("pl/koder95/intencje/gui/Config.fxml"));
         config.showAndWait();
+        Pagination pagination = new Pagination();
+
+        VBox main = new VBox(pagination);
+        main.setFillWidth(true);
+        main.setPadding(new Insets(10));
+        main.setCache(true);
+        main.setCacheHint(CacheHint.SPEED);
+
+        VBox.setVgrow(pagination, Priority.ALWAYS);
+        HBox.setHgrow(pagination, Priority.ALWAYS);
+
+        primaryStage.setScene(new Scene(main));
+        primaryStage.setTitle(APP_NAME);
         primaryStage.show();
     }
 
