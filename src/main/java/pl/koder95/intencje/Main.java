@@ -11,8 +11,9 @@ import java.nio.file.Files;
 import java.util.Properties;
 
 public class Main extends Application {
-
+	
     public static final String APP_NAME = "Intencje mszalne";
+    public static final int ERR_ENV_REQ = 300;
 
     @Override
     public void init() throws Exception {
