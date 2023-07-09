@@ -5,6 +5,8 @@ import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import pl.koder95.intencje.core.cli.CL;
+import pl.koder95.intencje.core.db.DB;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
 
@@ -22,7 +24,6 @@ public class Main extends Application {
                 DB.initConnectionProperties(properties);
             } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(ERR_ENV_REQ_CANNOT_READ_FILE);
             }
         }
     }
