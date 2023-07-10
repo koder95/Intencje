@@ -29,20 +29,21 @@ public class DB {
     }
 
     public static List<String> tables() throws SQLException {
-        Statement test = DB.conn().createStatement();
-        test.execute("SHOW TABLES;");
-        ResultSet resultSet = test.getResultSet();
-        List<String> tables = new LinkedList<>();
-        while (resultSet.next()) {
-            String tableName = resultSet.getString(1);
-            if (tableName.startsWith(getTablePrefix())) {
-                tables.add(tableName);
+        try (Connection conn = DB.conn()) {
+            Statement test = conn.createStatement();
+            test.execute("SHOW TABLES;");
+            ResultSet resultSet = test.getResultSet();
+            List<String> tables = new LinkedList<>();
+            while (resultSet.next()) {
+                String tableName = resultSet.getString(1);
+                if (tableName.startsWith(getTablePrefix())) {
+                    tables.add(tableName);
+                }
             }
+            ArrayList<String> result = new ArrayList<>(tables);
+            tables.clear();
+            return result;
         }
-        ArrayList<String> result = new ArrayList<>(tables);
-        tables.clear();
-        System.out.println(result);
-        return result;
     }
 
     public static void initConnectionProperties(Properties p) {
