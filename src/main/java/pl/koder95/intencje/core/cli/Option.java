@@ -26,8 +26,18 @@ public class Option {
         return vars;
     }
 
+    public boolean containsVar(String name) {
+        return vars.stream().anyMatch(var -> var.getName().equals(name));
+    }
+
     public Variable getVar(String name) {
-        return vars.stream().reduce(null, (r, c) -> c.getName().equalsIgnoreCase(name)? c : r);
+        return vars.stream().reduce(null, (r, c) -> c.getName().equals(name)? c : r);
+    }
+
+    public Variable popVar(String name) {
+        Variable var = getVar(name);
+        vars.remove(var);
+        return var;
     }
 
     public void setVars(Collection<Variable> vars) {
@@ -36,7 +46,11 @@ public class Option {
 
     public Properties getVarsAsProperties() {
         Properties properties = new Properties();
-        getVars().stream().forEach(var -> properties.put(var.getName(), var.getValue()));
+        getVars().stream().peek(var -> {
+            if (var.getValue() == null) {
+                var.setValue("true");
+            }
+        }).forEach(var -> properties.setProperty(var.getName(), var.getValue()));
         return properties;
     }
 }
