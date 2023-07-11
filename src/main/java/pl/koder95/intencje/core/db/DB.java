@@ -16,7 +16,7 @@ public class DB {
     private static Connection CONN = null;
     private DB() {}
 
-    public static Connection conn() throws SQLException {
+    static Connection conn() throws SQLException {
         if (CONN == null) {
             String url = "jdbc:" + CONN_PROP.getProperty("driver") + "://" + CONN_PROP.getProperty("hostname") + "/" + CONN_PROP.getProperty("dbName");
             CONN = DriverManager.getConnection(url, CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
