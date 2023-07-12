@@ -21,7 +21,9 @@ import java.util.Properties;
 public class Main extends Application {
 	
     public static final String PARISH_NAME = "Parafia rzymskokatolicka...";
-    public static final String APP_NAME = "Intencje – " + PARISH_NAME;
+    public static final String APP_NAME = "Intencje";
+    public static final String APP_HEADER = "Intencje – " + PARISH_NAME;
+	
     public static final int ERR_ENV_REQ = 300;
 
     @Override
@@ -54,7 +56,7 @@ public class Main extends Application {
         HBox.setHgrow(pagination, Priority.ALWAYS);
 
         primaryStage.setScene(new Scene(main));
-        primaryStage.setTitle(APP_NAME);
+        primaryStage.setTitle(APP_HEADER);
         primaryStage.show();
     }
 

@@ -4,6 +4,8 @@
 
 package pl.koder95.intencje.core.db;
 
+import pl.koder95.intencje.event.ConnectionTestingEvent;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,13 +15,21 @@ import java.util.Properties;
 public class DB {
 
     private static final Properties CONN_PROP = new Properties();
+    private static final String DEFAULT_COMMON_SEARCH = "intencje";
+    private static final String DEFAULT_DAY_NAME_ENDING = "_nazwy";
     private static Connection CONN = null;
+    private static ConnectionTester TESTER = null;
     private DB() {}
 
-    public static Connection conn() throws SQLException {
+    private static String url() {
+        return "jdbc:" + CONN_PROP.getProperty("driver") + "://"
+                + CONN_PROP.getProperty("hostname") + "/" + CONN_PROP.getProperty("dbName");
+    }
+
+    static Connection conn() throws SQLException {
         if (CONN == null) {
-            String url = "jdbc:" + CONN_PROP.getProperty("driver") + "://" + CONN_PROP.getProperty("hostname") + "/" + CONN_PROP.getProperty("dbName");
-            CONN = DriverManager.getConnection(url, CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
+            CONN = DriverManager.getConnection(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
+            TESTER = new ConnectionTester(DB.CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
         }
         if (CONN.isValid(0)) return CONN;
         else {
@@ -29,20 +39,18 @@ public class DB {
     }
 
     public static List<String> tables() throws SQLException {
-        Statement test = DB.conn().createStatement();
-        test.execute("SHOW TABLES;");
-        ResultSet resultSet = test.getResultSet();
-        List<String> tables = new LinkedList<>();
-        while (resultSet.next()) {
-            String tableName = resultSet.getString(1);
-            if (tableName.startsWith(getTablePrefix())) {
-                tables.add(tableName);
+        try (Connection conn = DB.conn()) {
+            Statement test = conn.createStatement();
+            test.execute("SHOW TABLES;");
+            ResultSet resultSet = test.getResultSet();
+            List<String> tables = new LinkedList<>();
+            while (resultSet.next()) {
+                tables.add(resultSet.getString(1));
             }
+            ArrayList<String> result = new ArrayList<>(tables);
+            tables.clear();
+            return result;
         }
-        ArrayList<String> result = new ArrayList<>(tables);
-        tables.clear();
-        System.out.println(result);
-        return result;
     }
 
     public static void initConnectionProperties(Properties p) {
@@ -57,12 +65,28 @@ public class DB {
             throw new IllegalStateException("Cannot find property called 'prefix'. Please check configuration files.");
         }
     }
+    
+    private static ConnectionTester.Test LAST_TEST = null;
+    private static ConnectionTester.DatabaseTableNamespace LAST_FOUND_NAMESPACE = null;
+
+    static void test(ConnectionTester tester) {
+        tester.test(new ConnectionTestingEvent(DB.class));
+        LAST_TEST = tester.getTestResult();
+        LAST_FOUND_NAMESPACE = tester.getDatabaseTableNamespace();
+    }
 
     public static boolean test() {
-        try {
-            return !tables().isEmpty();
-        } catch (SQLException e) {
-            return false;
-        }
+        if (TESTER != null) test(TESTER);
+        return LAST_TEST.isDatabaseConfig();
+    }
+
+    static String getDayNameTableName() {
+        if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection first!");
+        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getDayNameTableName();
+    }
+
+    static String getIntentionTableName() {
+        if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection first!");
+        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getIntentionTableName();
     }
 }

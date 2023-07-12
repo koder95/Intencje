@@ -2,7 +2,7 @@ package pl.koder95.intencje.core.cli;
 
 import java.util.Objects;
 
-class Variable {
+public class Variable {
 
     private final String name;
     private String value;
