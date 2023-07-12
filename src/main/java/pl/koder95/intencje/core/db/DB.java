@@ -13,7 +13,10 @@ import java.util.Properties;
 public class DB {
 
     private static final Properties CONN_PROP = new Properties();
+    private static final String DEFAULT_COMMON_SEARCH = "intencje";
+    private static final String DEFAULT_DAY_NAME_ENDING = "_nazwy";
     private static Connection CONN = null;
+    private static ConnectionTester TESTER = null;
     private DB() {}
 
     private static String url() {
@@ -24,6 +27,7 @@ public class DB {
     static Connection conn() throws SQLException {
         if (CONN == null) {
             CONN = DriverManager.getConnection(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
+            TESTER = new ConnectionTester(DB.CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
         }
         if (CONN.isValid(0)) return CONN;
         else {
@@ -39,10 +43,7 @@ public class DB {
             ResultSet resultSet = test.getResultSet();
             List<String> tables = new LinkedList<>();
             while (resultSet.next()) {
-                String tableName = resultSet.getString(1);
-                if (tableName.startsWith(getTablePrefix())) {
-                    tables.add(tableName);
-                }
+                tables.add(resultSet.getString(1));
             }
             ArrayList<String> result = new ArrayList<>(tables);
             tables.clear();
@@ -62,12 +63,28 @@ public class DB {
             throw new IllegalStateException("Cannot find property called 'prefix'. Please check configuration files.");
         }
     }
+    
+    private static ConnectionTester.Test LAST_TEST = null;
+    private static ConnectionTester.DatabaseTableNamespace LAST_FOUND_NAMESPACE = null;
+
+    static void test(ConnectionTester tester) {
+        tester.test();
+        LAST_TEST = tester.getTestResult();
+        LAST_FOUND_NAMESPACE = tester.getDatabaseTableNamespace();
+    }
 
     public static boolean test() {
-        try {
-            return !tables().isEmpty();
-        } catch (SQLException e) {
-            return false;
-        }
+        if (TESTER != null) test(TESTER);
+        return LAST_TEST.isDatabaseConfig();
+    }
+
+    static String getDayNameTableName() {
+        if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection first!");
+        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getDayNameTableName();
+    }
+
+    static String getIntentionTableName() {
+        if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection first!");
+        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getIntentionTableName();
     }
 }
