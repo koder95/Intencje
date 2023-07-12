@@ -1,7 +1,9 @@
 package pl.koder95.intencje.core.db;
 
 import pl.koder95.intencje.event.ConnectionTestingEvent;
+import pl.koder95.intencje.event.ConnectionTestingListener;
 
+import javax.swing.event.EventListenerList;
 import java.net.InetAddress;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ public class ConnectionTester {
     private final TestMaker maker = new TestMaker();
     private final byte[] address;
     private final String host, databaseHost, commonSearch, dayNameEnding;
+    private final EventListenerList listenerList = new EventListenerList();
 
     ConnectionTester(byte[] address, String host, String databaseHost, String commonSearch, String dayNameEnding) {
         this.address = address;
@@ -31,9 +34,17 @@ public class ConnectionTester {
     }
 
     public void test(ConnectionTestingEvent event) {
+        ConnectionTestingListener[] listeners = listenerList.getListeners(ConnectionTestingListener.class);
         for (Step current : Step.values()) {
+            for (ConnectionTestingListener l : listeners) {
+                l.before(event, current);
+            }
             current.consume(this, maker);
+            for (ConnectionTestingListener l : listeners) {
+                l.after(event, current);
+            }
         }
+        System.gc();
     }
 
     public Test getTestResult() {
@@ -42,6 +53,14 @@ public class ConnectionTester {
 
     public DatabaseTableNamespace getDatabaseTableNamespace() {
         return maker.getDatabaseTableNamespace();
+    }
+
+    public void addConnectionTestingListener(ConnectionTestingListener listener) {
+        listenerList.add(ConnectionTestingListener.class, listener);
+    }
+
+    public void removeConnectionTestingListener(ConnectionTestingListener listener) {
+        listenerList.remove(ConnectionTestingListener.class, listener);
     }
 
     public static class Test {
