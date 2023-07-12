@@ -193,4 +193,12 @@ public class ConnectionTester {
             return this;
         }
     }
+
+    public enum Step {
+        CLEAR,
+        TEST_INTERNET_CONNECTION,
+        TEST_DOMAIN_NAME_RESOLVING,
+        TEST_DATABASE_SERVER_CONNECTION,
+        TEST_DATABASE_CONFIG
+    }
 }
