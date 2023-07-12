@@ -28,11 +28,10 @@ public class ConnectionTester {
         this(DEFAULT_ADDRESS, DEFAULT_HOST, databaseHost, commonSearch, dayNameEnding);
     }
 
-    
     public void test() {
-        maker.clear().testInternetConnection(address).testDomainNameResolving(host)
-                .testDatabaseServerConnection(databaseHost).testDatabaseServerConnection(databaseHost)
-                .testDatabaseConfig(commonSearch, dayNameEnding);
+        for (Step current : Step.values()) {
+            current.consume(this, maker);
+        }
     }
 
     public Test getTestResult() {
