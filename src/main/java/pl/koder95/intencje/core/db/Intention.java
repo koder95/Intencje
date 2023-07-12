@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Intention implements pl.koder95.intencje.core.Intention {
 
-    private static final String TABLE_NAME = DB.getTablePrefix() + "intencje";
+    private static final String TABLE_NAME = DB.getIntentionTableName();
     private LocalDateTime massTime;
 
     private Intention(LocalDateTime massTime) {

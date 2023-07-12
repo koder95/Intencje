@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DayName implements pl.koder95.intencje.core.DayName {
 
-    private static final String TABLE_NAME = DB.getTablePrefix() + "intencje_nazwy";
+    private static final String TABLE_NAME = DB.getDayNameTableName();
     private LocalDate date;
 
     private DayName(LocalDate date) {
