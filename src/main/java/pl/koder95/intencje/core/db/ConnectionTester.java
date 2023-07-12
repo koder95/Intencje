@@ -1,5 +1,7 @@
 package pl.koder95.intencje.core.db;
 
+import pl.koder95.intencje.event.ConnectionTestingEvent;
+
 import java.net.InetAddress;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -28,7 +30,7 @@ public class ConnectionTester {
         this(DEFAULT_ADDRESS, DEFAULT_HOST, databaseHost, commonSearch, dayNameEnding);
     }
 
-    public void test() {
+    public void test(ConnectionTestingEvent event) {
         for (Step current : Step.values()) {
             current.consume(this, maker);
         }

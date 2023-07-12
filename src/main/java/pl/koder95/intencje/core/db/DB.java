@@ -4,6 +4,8 @@
 
 package pl.koder95.intencje.core.db;
 
+import pl.koder95.intencje.event.ConnectionTestingEvent;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -68,7 +70,7 @@ public class DB {
     private static ConnectionTester.DatabaseTableNamespace LAST_FOUND_NAMESPACE = null;
 
     static void test(ConnectionTester tester) {
-        tester.test();
+        tester.test(new ConnectionTestingEvent(DB.class));
         LAST_TEST = tester.getTestResult();
         LAST_FOUND_NAMESPACE = tester.getDatabaseTableNamespace();
     }
