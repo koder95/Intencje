@@ -27,6 +27,21 @@ public class ConnectionTester {
         this(DEFAULT_ADDRESS, DEFAULT_HOST, databaseHost, commonSearch, dayNameEnding);
     }
 
+    
+    public void test() {
+        maker.clear().testInternetConnection(address).testDomainNameResolving(host)
+                .testDatabaseServerConnection(databaseHost).testDatabaseServerConnection(databaseHost)
+                .testDatabaseConfig(commonSearch, dayNameEnding);
+    }
+
+    public Test getTestResult() {
+        return maker.getConnectionTest();
+    }
+
+    public DatabaseTableNamespace getDatabaseTableNamespace() {
+        return maker.getDatabaseTableNamespace();
+    }
+
     public static class Test {
 
         private final LocalDateTime testTime = LocalDateTime.now();
