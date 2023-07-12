@@ -9,7 +9,23 @@ import java.util.stream.Stream;
 
 public class ConnectionTester {
 
+    private static final byte[] DEFAULT_ADDRESS = {1, 1, 1, 1};
+    private static final String DEFAULT_HOST = "google.com";
     private final TestMaker maker = new TestMaker();
+    private final byte[] address;
+    private final String host, databaseHost, commonSearch, dayNameEnding;
+
+    ConnectionTester(byte[] address, String host, String databaseHost, String commonSearch, String dayNameEnding) {
+        this.address = address;
+        this.host = host;
+        this.databaseHost = databaseHost;
+        this.commonSearch = commonSearch;
+        this.dayNameEnding = dayNameEnding;
+    }
+
+    ConnectionTester(String databaseHost, String commonSearch, String dayNameEnding) {
+        this(DEFAULT_ADDRESS, DEFAULT_HOST, databaseHost, commonSearch, dayNameEnding);
+    }
 
     public static class Test {
 
