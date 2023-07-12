@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -195,10 +196,20 @@ public class ConnectionTester {
     }
 
     public enum Step {
-        CLEAR,
-        TEST_INTERNET_CONNECTION,
-        TEST_DOMAIN_NAME_RESOLVING,
-        TEST_DATABASE_SERVER_CONNECTION,
-        TEST_DATABASE_CONFIG
+        CLEAR((tester, maker) -> maker.clear()),
+        TEST_INTERNET_CONNECTION((tester, maker) -> maker.testInternetConnection(tester.address)),
+        TEST_DOMAIN_NAME_RESOLVING((tester, maker) -> maker.testDomainNameResolving(tester.host)),
+        TEST_DATABASE_SERVER_CONNECTION((tester, maker) -> maker.testDatabaseServerConnection(tester.databaseHost)),
+        TEST_DATABASE_CONFIG((tester, maker) -> maker.testDatabaseConfig(tester.commonSearch, tester.dayNameEnding));
+
+        private final BiConsumer<ConnectionTester, TestMaker> consumer;
+
+        Step(BiConsumer<ConnectionTester, TestMaker> consumer) {
+            this.consumer = consumer;
+        }
+
+        void consume(ConnectionTester tester, TestMaker maker) {
+            consumer.accept(tester, maker);
+        }
     }
 }
