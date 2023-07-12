@@ -1,8 +1,15 @@
 package pl.koder95.intencje.core.db;
 
+import java.net.InetAddress;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ConnectionTester {
+
+    private final TestMaker maker = new TestMaker();
 
     public static class Test {
 
@@ -58,6 +65,101 @@ public class ConnectionTester {
 
         public String getDayNameTableName() {
             return dayNameTableName;
+        }
+    }
+
+    private static class TestMaker {
+
+        boolean internetConnection, domainNameResolvingCorrect, databaseServerConnection, databaseConfig;
+        String prefix, intentionTableName, dayNameTableName;
+
+        private TestMaker() {}
+
+        private boolean testConnection(byte[] address) {
+            try {
+                InetAddress ip = InetAddress.getByAddress(address);
+                return ip.isReachable(500);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        private boolean testConnection(String host) {
+            try {
+                InetAddress ip = InetAddress.getByName(host);
+                return ip.isReachable(500);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        TestMaker testInternetConnection(byte[] address) {
+            internetConnection = testConnection(address);
+            return this;
+        }
+
+        TestMaker testDomainNameResolving(String host) {
+            domainNameResolvingCorrect = internetConnection && testConnection(host);
+            return this;
+        }
+
+        TestMaker testDatabaseServerConnection(String dbHost) {
+            databaseServerConnection = domainNameResolvingCorrect && testConnection(dbHost);
+            return this;
+        }
+
+        TestMaker testDatabaseConfig(String commonSearch, String dayNameEnding) {
+            if (!databaseServerConnection) {
+                databaseConfig = false;
+                return this;
+            }
+            try {
+                Stream<String> stream = DB.tables().parallelStream().filter(table -> table.contains(commonSearch));
+                List<String> candidates = stream.collect(Collectors.toList());
+                String intentionTable = candidates.parallelStream()
+                        .filter(table -> table.endsWith(commonSearch))
+                        .findFirst().orElse(null);
+                String dayNameTable = candidates.parallelStream()
+                        .filter(table -> table.endsWith(commonSearch + dayNameEnding))
+                        .findFirst().orElse(null);
+                StringBuilder prefix = new StringBuilder();
+                databaseConfig = intentionTable != null && dayNameTable != null;
+                if (databaseConfig) {
+                    while (!intentionTable.isEmpty() && !dayNameTable.isEmpty()) {
+                        char intentionFirst = intentionTable.charAt(0);
+                        char dayNameFirst = dayNameTable.charAt(0);
+                        if (intentionFirst != dayNameFirst) break;
+                        prefix.append(intentionFirst);
+                        intentionTable = intentionTable.substring(1);
+                        dayNameTable = dayNameTable.substring(1);
+                    }
+                    this.prefix = prefix.toString();
+                    this.intentionTableName = intentionTable;
+                    this.dayNameTableName = dayNameTable;
+                } else {
+                    this.prefix = null;
+                    this.intentionTableName = null;
+                    this.dayNameTableName = null;
+                }
+            } catch (SQLException e) {
+                databaseConfig = false;
+            }
+            return this;
+        }
+
+        Test getConnectionTest() {
+            return new Test(internetConnection, domainNameResolvingCorrect, databaseServerConnection, databaseConfig);
+        }
+
+        DatabaseTableNamespace getDatabaseTableNamespace() {
+            return new DatabaseTableNamespace(prefix, intentionTableName, dayNameTableName);
+        }
+
+        TestMaker clear() {
+            internetConnection = false; domainNameResolvingCorrect = false;
+            databaseServerConnection = false; databaseConfig = false;
+            prefix = null; intentionTableName = null; dayNameTableName = null;
+            return this;
         }
     }
 }
