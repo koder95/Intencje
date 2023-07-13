@@ -22,14 +22,18 @@ public class DB {
     private DB() {}
 
     private static String url() {
+        if (!CONN_PROP.containsKey("driver") || !CONN_PROP.containsKey("hostname") || !CONN_PROP.containsKey("dbName")) {
+            throw new IllegalStateException("The connection has not been configured yet");
+        }
         return "jdbc:" + CONN_PROP.getProperty("driver") + "://"
                 + CONN_PROP.getProperty("hostname") + "/" + CONN_PROP.getProperty("dbName");
     }
 
     static Connection conn() throws SQLException {
         if (CONN == null) {
-            CONN = DriverManager.getConnection(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
-            TESTER = new ConnectionTester(DB.CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
+            if (CONN_PROP.containsKey("user") && CONN_PROP.containsKey("password"))
+                CONN = DriverManager.getConnection(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
+            else throw new IllegalStateException("The connection has not been configured yet");
         }
         if (CONN.isValid(0)) return CONN;
         else {
@@ -55,6 +59,7 @@ public class DB {
 
     public static void initConnectionProperties(Properties p) {
         CONN_PROP.clear();
+        TESTER = null;
         if (p != null) CONN_PROP.putAll(p);
     }
 
@@ -76,7 +81,10 @@ public class DB {
     }
 
     public static boolean test() {
-        if (TESTER != null) test(TESTER);
+        if (TESTER == null && CONN_PROP.containsKey("hostname")) {
+            TESTER = new ConnectionTester(CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
+        } else throw new IllegalStateException("The connection has not been configured yet");
+        test(TESTER);
         return LAST_TEST.isDatabaseConfig();
     }
 
