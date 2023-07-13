@@ -37,7 +37,6 @@ public class Config {
         settings.setProperty("hostname", formController.getHostname().getValue());
         settings.setProperty("dbName", formController.getDbName().getValue());
         settings.setProperty("user", formController.getUser().getValue());
-        settings.setProperty("prefix", formController.getPrefix().getValue());
         settings.setProperty("password", formController.getPassword().getValue());
         return settings;
     }

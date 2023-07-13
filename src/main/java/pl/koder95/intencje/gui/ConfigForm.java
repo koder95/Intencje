@@ -14,7 +14,7 @@ import java.util.Properties;
 public class ConfigForm {
 
     @FXML
-    private TextField hostname, dbName, prefix, user, password;
+    private TextField hostname, dbName, user, password;
 
     public void initialize() {
         if (Files.exists(Paths.DB_CONN_DATA_FILE)) {
@@ -23,7 +23,6 @@ public class ConfigForm {
                 properties.load(Files.newInputStream(Paths.DB_CONN_DATA_FILE));
                 hostname.textProperty().setValue(properties.getProperty("hostname"));
                 dbName.textProperty().setValue(properties.getProperty("dbName"));
-                prefix.textProperty().setValue(properties.getProperty("prefix"));
                 user.textProperty().setValue(properties.getProperty("user"));
                 password.textProperty().setValue(properties.getProperty("password"));
             } catch (IOException e) {
@@ -48,10 +47,6 @@ public class ConfigForm {
 
     public StringProperty getDbName() {
         return dbName.textProperty();
-    }
-
-    public StringProperty getPrefix() {
-        return prefix.textProperty();
     }
 
     public StringProperty getUser() {

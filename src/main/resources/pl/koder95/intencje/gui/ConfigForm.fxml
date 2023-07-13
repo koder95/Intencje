@@ -16,11 +16,6 @@
          <VBox.margin>
             <Insets bottom="10.0" />
          </VBox.margin></TextField>
-      <Label text="Przedrostek tabel:" />
-      <TextField fx:id="prefix">
-         <VBox.margin>
-            <Insets bottom="10.0" />
-         </VBox.margin></TextField>
       <Label text="Nazwa użytkownika:" />
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <VBox.margin>
