@@ -1,6 +1,8 @@
 package pl.koder95.intencje;
 
 import pl.koder95.intencje.core.cli.CL;
+import pl.koder95.intencje.gui.MainFrame;
+
 import javax.swing.*;
 
 public class Main {
@@ -12,6 +14,9 @@ public class Main {
     public static void main(String[] args) {
         CL.capture(args).service(new ConfigCLI());
         setupLookAndFeel();
+		
+        MainFrame frame = new MainFrame();
+        frame.setVisible(true);
     }
 
     private static void setupLookAndFeel() {
