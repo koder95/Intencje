@@ -11,6 +11,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static pl.koder95.intencje.Main.APP_HEADER;
 import static pl.koder95.intencje.Main.APP_NAME;
 import static pl.koder95.intencje.Main.PARISH_NAME;
@@ -18,6 +21,9 @@ import static pl.koder95.intencje.Main.PARISH_NAME;
 public class MainFrame extends JFrame {
 
     private static final String FOOTER_CONTENT = "©: Kamil Mularski — 2023";
+
+    private static final Function<Integer, EmptyBorder> EMPTY_BORDER_FACTORY = m -> new EmptyBorder(m, m, m, m);
+    public static final Consumer<JPanel> MARGIN_FACTORY = p -> p.setBorder(EMPTY_BORDER_FACTORY.apply(10));
 
     public MainFrame() throws HeadlessException {
         super(APP_HEADER);
@@ -51,11 +57,15 @@ public class MainFrame extends JFrame {
         tools.setFloatable(false);
 
         panel.add(tools);
+
+        MARGIN_FACTORY.accept(panel);
         return panel;
     }
 
     private JPanel createLeftSide() {
         JPanel panel = new JPanel();
+
+        MARGIN_FACTORY.accept(panel);
         return panel;
     }
 
@@ -71,6 +81,8 @@ public class MainFrame extends JFrame {
 
         panel.add(header);
         panel.add(subHeader);
+
+        MARGIN_FACTORY.accept(panel);
         return panel;
     }
 
@@ -85,6 +97,8 @@ public class MainFrame extends JFrame {
         text.setFont(text.getFont().deriveFont(10f));
 
         panel.add(text);
+
+        MARGIN_FACTORY.accept(panel);
         return panel;
     }
 }
