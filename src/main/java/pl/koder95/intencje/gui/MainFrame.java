@@ -1,13 +1,23 @@
 package pl.koder95.intencje.gui;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 
 import static pl.koder95.intencje.Main.APP_HEADER;
+import static pl.koder95.intencje.Main.APP_NAME;
+import static pl.koder95.intencje.Main.PARISH_NAME;
 
 public class MainFrame extends JFrame {
+
+    private static final String FOOTER_CONTENT = "©: Kamil Mularski — 2023";
 
     public MainFrame() throws HeadlessException {
         super(APP_HEADER);
@@ -34,22 +44,47 @@ public class MainFrame extends JFrame {
     }
 
     private JPanel createRightSide() {
-        return null;
+        JPanel panel = new JPanel();
+        JToolBar tools = new JToolBar();
+        tools.setName("Zarządzanie intencjami");
+        tools.setOrientation(SwingConstants.VERTICAL);
+        tools.setFloatable(false);
+
+        panel.add(tools);
+        return panel;
     }
 
     private JPanel createLeftSide() {
-        return null;
+        JPanel panel = new JPanel();
+        return panel;
     }
 
     private JPanel createHeader() {
-        return null;
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        JLabel header = new JLabel(PARISH_NAME);
+        JLabel subHeader = new JLabel(APP_NAME);
+
+        header.setFont(header.getFont().deriveFont(Font.BOLD,24f));
+        header.setHorizontalAlignment(JLabel.CENTER);
+        subHeader.setFont(subHeader.getFont().deriveFont(16f));
+        subHeader.setHorizontalAlignment(JLabel.CENTER);
+
+        panel.add(header);
+        panel.add(subHeader);
+        return panel;
     }
 
     private JPanel createMainPane() {
-        return null;
+        return new SingleDayPanel();
     }
 
     private JPanel createFooter() {
-        return null;
+        JPanel panel = new JPanel(new GridLayout(1, 1));
+        JLabel text = new JLabel(FOOTER_CONTENT);
+        text.setHorizontalAlignment(JLabel.CENTER);
+        text.setFont(text.getFont().deriveFont(10f));
+
+        panel.add(text);
+        return panel;
     }
 }

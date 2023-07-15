@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         CL.capture(args).service(new ConfigCLI());
         setupLookAndFeel();
-		
+
         Properties settings = new Properties();
         if (Files.exists(Paths.DB_CONN_DATA_FILE)) {
             try {
