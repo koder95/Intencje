@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import static javax.swing.JOptionPane.*;
+
 public class Main {
 
     public static final String PARISH_NAME = "Parafia rzymskokatolicka...";
@@ -26,6 +28,7 @@ public class Main {
                 settings.load(Files.newInputStream(Paths.DB_CONN_DATA_FILE));
             } catch (IOException e) {
                 e.printStackTrace();
+                showMessageDialog(null, "Nie udało się załadować ustawień połączenia z bazą danych", "Błąd wczytywania", ERROR_MESSAGE);
             }
         } else {
             Path parent = Paths.DB_CONN_DATA_FILE.getParent();
@@ -34,6 +37,7 @@ public class Main {
                     Files.createDirectories(parent);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    showMessageDialog(null, "Nie udało się utworzyć folderu dla ustawień programu", "Błąd podczas tworzenia folderu", ERROR_MESSAGE);
                 }
             }
             String hostname = "";
@@ -50,11 +54,17 @@ public class Main {
         if (DB.test()) {
             if (Files.notExists(Paths.DB_CONN_DATA_FILE)) {
                 try {
+                    int option = showConfirmDialog(null, "Udało się połączyć z bazą danych. Zapisać ustawienia?", "Połączono", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION) {
                     settings.store(Files.newOutputStream(Paths.DB_CONN_DATA_FILE), "");
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    showMessageDialog(null, "Nie udało się zapisać ustawień połączenia z bazą danych", "Błąd zapisu", ERROR_MESSAGE);
                 }
             }
+        } else {
+            showMessageDialog(null, "Nie udało się nawiązać połączenia z bazą danych.\nPorzucono ustawienia.", "Błąd łączenia", JOptionPane.ERROR_MESSAGE);
         }
 
         MainFrame frame = new MainFrame();
