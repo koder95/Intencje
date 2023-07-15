@@ -36,7 +36,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "` WHERE `msza` = ?");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
-            if (results.first()) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
+            if (results.next()) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
                     " jest już zapisana intencja. Najpierw zmień ją albo usuń.");
             else {
                 pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
@@ -45,7 +45,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                 pstmt.setTimestamp(2, Timestamp.valueOf(this.massTime));
                 pstmt.execute();
                 results = pstmt.getResultSet();
-                if (results.first()) {
+                if (results.next()) {
                     int count = results.getInt(0);
                     System.out.println("Updated rows: " + count);
                     if (count == 0) return;
@@ -62,7 +62,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "` WHERE `msza` = ?");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
-            return results.first() ? results.getString("kaplica") : null;
+            return results.next()? results.getString("kaplica") : null;
         }
     }
 
@@ -75,7 +75,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             pstmt.setTimestamp(2, Timestamp.valueOf(massTime));
             pstmt.execute();
             ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
+            if (results.next()) {
                 int count = results.getInt(0);
                 System.out.println("Updated rows: " + count);
             }
@@ -89,7 +89,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "` WHERE `msza` = ?");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
-            return results.first() ? results.getString("intencja") : null;
+            return results.next()? results.getString("intencja") : null;
         }
     }
 
@@ -190,7 +190,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "` WHERE `msza` = ?");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
-            return results.first() ? new Intention(results) : null;
+            return results.next()? new Intention(results) : null;
         }
     }
 

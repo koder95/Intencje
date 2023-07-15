@@ -27,7 +27,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
                     "` WHERE `data` = ?");
             pstmt.setDate(1, Date.valueOf(date));
             ResultSet results = pstmt.executeQuery();
-            if (results.first()) throw new SQLException("Nie można zmienić daty dla nazwy dnia. Do wprowadzonego dnia" +
+            if (results.next()) throw new SQLException("Nie można zmienić daty dla nazwy dnia. Do wprowadzonego dnia" +
                     " jest już przypisana nazwa. Najpierw zmień ją albo usuń.");
             else {
                 pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
@@ -36,7 +36,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
                 pstmt.setDate(2, Date.valueOf(getDate()));
                 pstmt.execute();
                 results = pstmt.getResultSet();
-                if (results.first()) {
+                if (results.next()) {
                     int count = results.getInt(0);
                     System.out.println("Updated rows: " + count);
                     if (count == 0) return;
@@ -53,7 +53,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
                     "` WHERE `data` = ?");
             pstmt.setDate(1, Date.valueOf(getDate()));
             ResultSet results = pstmt.executeQuery();
-            return results.first() ? results.getString("nazwa") : null;
+            return results.next()? results.getString("nazwa") : null;
         }
     }
 
@@ -66,7 +66,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
             pstmt.setDate(2, Date.valueOf(getDate()));
             pstmt.execute();
             ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
+            if (results.next()) {
                 int count = results.getInt(0);
                 System.out.println("Updated rows: " + count);
             }
@@ -85,7 +85,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
             pstmt.setDate(2, Date.valueOf(date));
             pstmt.execute();
             ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
+            if (results.next()) {
                 int count = results.getInt(0);
                 System.out.println("Sync rows: " + count);
             }
@@ -109,7 +109,7 @@ public class DayName implements pl.koder95.intencje.core.DayName {
                     "` WHERE `data` = ?");
             pstmt.setDate(1, Date.valueOf(date));
             ResultSet results = pstmt.executeQuery();
-            return results.first() ? new DayName(results.getDate("data").toLocalDate())
+            return results.next() ? new DayName(results.getDate("data").toLocalDate())
                     : null;
         }
     }
