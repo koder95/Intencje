@@ -23,52 +23,64 @@ public class Main {
         setupLookAndFeel();
 
         Properties settings = new Properties();
-        if (Files.exists(Paths.DB_CONN_DATA_FILE)) {
+        if (Files.notExists(Paths.DB_CONN_DATA_FILE)) {
+            checkParentDirExists();
+            fromUI(settings);
+            DB.initConnectionProperties(settings);
+            if (DB.test()) {
+                int option = showConfirmDialog(null, "Udało się połączyć z bazą danych. Zapisać ustawienia?", "Połączono", JOptionPane.YES_NO_OPTION);
+                while (true) {
+                    try {
+                        if (option == JOptionPane.YES_OPTION) {
+                            settings.store(Files.newOutputStream(Paths.DB_CONN_DATA_FILE), "");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        if (showConfirmDialog(null, "Nie udało się zapisać ustawień połączenia z bazą danych. Ponowić próbę?", "Błąd zapisu", YES_NO_OPTION, ERROR_MESSAGE) == NO_OPTION) break;
+                    }
+                }
+            }
+            else {
+                showMessageDialog(null, "Nie udało się nawiązać połączenia z bazą danych.\nPorzucono ustawienia.", "Błąd łączenia", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            // W przypadku istnienia zapisanych ustawień dla połączenia z bazą danych:
             try {
-                settings.load(Files.newInputStream(Paths.DB_CONN_DATA_FILE));
+                settings.load(Files.newInputStream(Paths.DB_CONN_DATA_FILE)); // – wczytywanie ustawień
+                DB.initConnectionProperties(settings); // – ustawianie parametrów połączenia
             } catch (IOException e) {
                 e.printStackTrace();
-                showMessageDialog(null, "Nie udało się załadować ustawień połączenia z bazą danych", "Błąd wczytywania", ERROR_MESSAGE);
+                showMessageDialog(null, "Nie można wczytać ustawień dla połączenia z bazą danych", "Błąd wczytywania ustawień", ERROR_MESSAGE);
             }
-        } else {
-            Path parent = Paths.DB_CONN_DATA_FILE.getParent();
-            if (Files.notExists(parent)) {
-                try {
-                    Files.createDirectories(parent);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showMessageDialog(null, "Nie udało się utworzyć folderu dla ustawień programu", "Błąd podczas tworzenia folderu", ERROR_MESSAGE);
-                }
-            }
-            String hostname = "";
-            String dbName = "";
-            String user = "";
-            String password = "";
-            settings.setProperty("driver", "mysql");
-            settings.setProperty("hostname", hostname);
-            settings.setProperty("dbName", dbName);
-            settings.setProperty("user", user);
-            settings.setProperty("password", password);
         }
-        DB.initConnectionProperties(settings);
-        if (DB.test()) {
-            if (Files.notExists(Paths.DB_CONN_DATA_FILE)) {
-                try {
-                    int option = showConfirmDialog(null, "Udało się połączyć z bazą danych. Zapisać ustawienia?", "Połączono", JOptionPane.YES_NO_OPTION);
-                    if (option == JOptionPane.YES_OPTION) {
-                    settings.store(Files.newOutputStream(Paths.DB_CONN_DATA_FILE), "");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showMessageDialog(null, "Nie udało się zapisać ustawień połączenia z bazą danych", "Błąd zapisu", ERROR_MESSAGE);
-                }
-            }
-        } else {
-            showMessageDialog(null, "Nie udało się nawiązać połączenia z bazą danych.\nPorzucono ustawienia.", "Błąd łączenia", JOptionPane.ERROR_MESSAGE);
-        }
-
+        DB.test();
         MainFrame frame = new MainFrame();
         frame.setVisible(true);
+    }
+
+    private static void checkParentDirExists() {
+        Path parent = Paths.DB_CONN_DATA_FILE.getParent();
+        if (Files.notExists(parent)) {
+            try {
+                Files.createDirectories(parent);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showMessageDialog(null, "Nie udało się utworzyć folderu dla ustawień programu", "Błąd podczas tworzenia folderu", ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private static void fromUI(Properties settings) {
+        String hostname = showInputDialog(null, "Wprowadź nazwę serwera bazy danych", "Serwer bazy danych", JOptionPane.QUESTION_MESSAGE);
+        String dbName = showInputDialog(null, "Wprowadź nazwę bazy danych", "Baza danych", JOptionPane.QUESTION_MESSAGE);
+        String user = showInputDialog(null, "Wprowadź nazwę użytkownika bazy danych", "Nazwa użytkownika", JOptionPane.QUESTION_MESSAGE);
+        String password = showInputDialog(null, "Wprowadź hasło", "Hasło", JOptionPane.QUESTION_MESSAGE);
+        settings.setProperty("driver", "mysql");
+        settings.setProperty("hostname", hostname);
+        settings.setProperty("dbName", dbName);
+        settings.setProperty("user", user);
+        settings.setProperty("password", password);
     }
 
     private static void setupLookAndFeel() {
