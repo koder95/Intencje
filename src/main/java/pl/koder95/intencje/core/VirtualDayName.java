@@ -1,59 +1,41 @@
 package pl.koder95.intencje.core;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import pl.koder95.intencje.core.db.DayName;
 
 import java.time.LocalDate;
 
 public class VirtualDayName implements pl.koder95.intencje.core.DayName {
 
-    private final ObjectProperty<LocalDate> date;
-    private final StringProperty name;
+    private LocalDate date;
+    private String name;
 
     public VirtualDayName(LocalDate date, String name) {
-        this.date = new SimpleObjectProperty<>(date);
-        this.name = new SimpleStringProperty(name);
+        this.date = date;
+        this.name = name;
     }
 
-    public VirtualDayName(LocalDate date) {
-        this.date = new SimpleObjectProperty<>(date);
-        this.name = new SimpleStringProperty();
-    }
-
-    public VirtualDayName() {
-        this.date = new SimpleObjectProperty<>();
-        this.name = new SimpleStringProperty();
+    public VirtualDayName(String name) {
+        this(LocalDate.now(), name);
     }
 
     @Override
     public LocalDate getDate() {
-        return date.get();
+        return date;
     }
 
     @Override
     public void setDate(LocalDate date) {
-        this.date.set(date);
+        this.date = date;
     }
 
     @Override
     public String getName() {
-        return name.get();
+        return name;
     }
 
     @Override
     public void setName(String name) {
-        this.name.set(name);
-    }
-
-    public ObjectProperty<LocalDate> dateProperty() {
-        return date;
-    }
-
-    public StringProperty nameProperty() {
-        return name;
+        this.name = name;
     }
 
     public RealDayName toReal() throws Exception {

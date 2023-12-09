@@ -1,7 +1,5 @@
 package pl.koder95.intencje.core;
 
-import pl.koder95.intencje.core.Intention;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -23,13 +21,9 @@ public class RealIntention extends VirtualIntention {
      * intencję w bazie danych
      * @param db obiekt sterujący bazą danych pobierając i zapisując w niej intencje
      */
-    public RealIntention(pl.koder95.intencje.core.db.Intention db) {
+    public RealIntention(pl.koder95.intencje.core.db.Intention db) throws Exception {
+        super(db.getMassTime(), db.getChapel(), db.getContent());
         dbInstance = Objects.requireNonNull(db);
-        try {
-            update();
-        } catch (Exception e) {
-            throw new RuntimeException("Nie pobrano danych z bazy", e);
-        }
     }
 
     /**
@@ -113,7 +107,12 @@ public class RealIntention extends VirtualIntention {
     public static List<RealIntention> load(LocalDate date) throws Exception {
         return pl.koder95.intencje.core.db.Intention.load(date).stream()
                 .filter(l -> l instanceof pl.koder95.intencje.core.db.Intention)
-                .map(db -> new RealIntention((pl.koder95.intencje.core.db.Intention) db))
-                .collect(Collectors.toList());
+                .map(db -> {
+                    try {
+                        return new RealIntention((pl.koder95.intencje.core.db.Intention) db);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }).collect(Collectors.toList());
     }
 }
