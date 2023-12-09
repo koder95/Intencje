@@ -90,11 +90,11 @@ public class DB {
 
     static String getDayNameTableName() {
         if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection before!");
-        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getDayNameTableName();
+        return LAST_FOUND_NAMESPACE.prefix() + LAST_FOUND_NAMESPACE.dayNameTableName();
     }
 
     static String getIntentionTableName() {
         if (LAST_FOUND_NAMESPACE == null) throw new IllegalStateException("Test the connection before!");
-        return LAST_FOUND_NAMESPACE.getPrefix() + LAST_FOUND_NAMESPACE.getIntentionTableName();
+        return LAST_FOUND_NAMESPACE.prefix() + LAST_FOUND_NAMESPACE.intentionTableName();
     }
 }

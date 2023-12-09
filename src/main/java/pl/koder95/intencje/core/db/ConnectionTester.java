@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ConnectionTester {
@@ -97,27 +96,8 @@ public class ConnectionTester {
         }
     }
 
-    public static class DatabaseTableNamespace {
+    public record DatabaseTableNamespace(String prefix, String intentionTableName, String dayNameTableName) {
 
-        private final String prefix, intentionTableName, dayNameTableName;
-
-        public DatabaseTableNamespace(String prefix, String intentionTableName, String dayNameTableName) {
-            this.prefix = prefix;
-            this.intentionTableName = intentionTableName;
-            this.dayNameTableName = dayNameTableName;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public String getIntentionTableName() {
-            return intentionTableName;
-        }
-
-        public String getDayNameTableName() {
-            return dayNameTableName;
-        }
     }
 
     private static class TestMaker {
@@ -167,7 +147,7 @@ public class ConnectionTester {
             }
             try {
                 Stream<String> stream = DB.tables().parallelStream().filter(table -> table.contains(commonSearch));
-                List<String> candidates = stream.collect(Collectors.toList());
+                List<String> candidates = stream.toList();
                 String intentionTable = candidates.parallelStream()
                         .filter(table -> table.endsWith(commonSearch))
                         .findFirst().orElse(null);

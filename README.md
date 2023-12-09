@@ -4,7 +4,7 @@ Współpracuje z dedykowaną wtyczką Wordpress, która pozwala na utworzenie wy
 Do właściwego działania programu wymagany jest dostęp zdalny do bazy danych, choć w przyszłości marzeniem twórcy jest współpraca przez REST API.
 
 ## Wymagania
-Uruchomienie programu wymaga zainstalowania środowiska uruchomieniowego Java 8 oraz systemu operacyjnego z GUI (choć kiedyś może się to zmieni, kto wie...).
+Uruchomienie programu wymaga zainstalowania środowiska uruchomieniowego Java 21 oraz systemu operacyjnego z GUI (choć kiedyś może się to zmieni, kto wie...).
 
 Program współpracuje ze zdalnymi bazami danych mySQL, które posiadają tabele:
 1. `%intencje` – posiada kolumny o nazwach

@@ -30,8 +30,7 @@ public class CL {
                     Object top = memory.pop();
                     if (top instanceof Option) {
                         memory.push(new Option(str));
-                    } else if (top instanceof Variable) {
-                        Variable var = (Variable) top;
+                    } else if (top instanceof Variable var) {
                         if (var.getValue() == null) {
                             var.setValue(str);
                             memory.push(var);
@@ -51,8 +50,7 @@ public class CL {
                 vars.offerLast((Variable) top);
                 while (!memory.empty()) {
                     Object underTop = memory.pop();
-                    if (underTop instanceof Option) {
-                        Option option = (Option) underTop;
+                    if (underTop instanceof Option option) {
                         if (option.getVars() == null)
                             option.setVars(new ArrayList<>(vars));
                         else {
@@ -61,8 +59,7 @@ public class CL {
                         vars.clear();
                         options.offer(option);
                         break;
-                    } else if (underTop instanceof Variable) {
-                        Variable var = (Variable) underTop;
+                    } else if (underTop instanceof Variable var) {
                         vars.offerFirst(var);
                     } else throw new IllegalStateException("Unknown object in parser memory. " + underTop);
                 }
