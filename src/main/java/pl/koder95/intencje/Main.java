@@ -10,5 +10,6 @@ public class Main {
 
     public static void main(String[] args) {
         CL.capture(args).service(new ConfigCLI());
+        App.main(args);
     }
 }
