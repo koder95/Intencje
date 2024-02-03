@@ -73,12 +73,6 @@ public class IntentionContentPane {
                     });
                 }
             });
-            editor.getChildrenUnmodifiable().forEach(c -> {
-                System.out.println("Child: " + c);
-                if (c instanceof Parent p) {
-                    p.getChildrenUnmodifiable().forEach(c1 -> System.out.println("– Child: " + c1));
-                }
-            });
         });
     }
 
