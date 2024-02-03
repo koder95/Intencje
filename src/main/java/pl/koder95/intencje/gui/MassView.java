@@ -2,7 +2,6 @@ package pl.koder95.intencje.gui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,9 +26,6 @@ public class MassView {
 
     private final ObjectProperty<EventHandler<ActionEvent>> onRemove = new SimpleObjectProperty<>();
     private final ObjectProperty<MassInfo> massInfo = new SimpleObjectProperty<>();
-    private ObservableValue<String> timeValue;
-    private ObservableValue<String> chapelValue;
-    private ObservableValue<String> contentValue;
 
     public void initialize() {
         massInfo.set(new MassInfo());
