@@ -1,27 +1,20 @@
 package pl.koder95.intencje.gui;
 
-import com.sun.webkit.dom.HTMLBodyElementImpl;
-import com.sun.webkit.dom.NodeListImpl;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.event.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.HTMLEditor;
-import javafx.scene.web.WebView;
 import org.jsoup.Jsoup;
-import org.w3c.dom.html.HTMLBodyElement;
-import org.w3c.dom.html.HTMLDocument;
-import org.w3c.dom.html.HTMLElement;
 
 import java.util.Objects;
 
