@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.dlsc.gemsfx.TimePicker?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.koder95.intencje.gui.MassEditorPane">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="SOMETIMES">
+               <children>
+                  <Label text="Godzina Mszy świętej:" />
+                  <TimePicker fx:id="mass"/>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="SOMETIMES">
+               <children>
+                  <CheckBox mnemonicParsing="false" text="kaplica?" fx:id="chapelCheck"/>
+                  <TextField fx:id="chapel"/>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
+       <fx:include fx:id="content" source="IntentionContentPane.fxml" />
+   </children>
+</VBox>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<HBox alignment="CENTER_LEFT" minHeight="90.0" minWidth="120.0" spacing="5.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.koder95.intencje.gui.MassView">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <children>
+      <Label fx:id="time" text="18:00" />
+      <Label fx:id="chapel" text=" " />
+      <WebView fx:id="content" disable="true" minHeight="50.0" minWidth="100.0" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      <VBox maxHeight="1.7976931348623157E308" minHeight="10.0" minWidth="10.0">
+         <children>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#edit" text="Edytuj" VBox.vgrow="ALWAYS" />
+            <Button fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Usuń" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+
+<TabPane nodeOrientation="RIGHT_TO_LEFT" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.koder95.intencje.gui.IntentionContentPane">
+    <Tab closable="false" text="Kod">
+      <content>
+         <ScrollPane fitToHeight="true" fitToWidth="true" nodeOrientation="LEFT_TO_RIGHT">
+            <content>
+               <TextArea fx:id="code" wrapText="true">
+                  <font>
+                     <Font name="Courier New" size="12.0" />
+                  </font></TextArea>
+            </content>
+         </ScrollPane>
+      </content></Tab>
+    <Tab fx:id="editorTab" closable="false" text="Edytor">
+      <content>
+         <HTMLEditor fx:id="editor" nodeOrientation="LEFT_TO_RIGHT" />
+      </content></Tab>
+</TabPane>
