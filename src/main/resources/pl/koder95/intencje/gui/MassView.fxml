@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
 
@@ -15,7 +16,15 @@
       <WebView fx:id="content" disable="true" minHeight="50.0" minWidth="400.0" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
       <VBox maxHeight="1.7976931348623157E308" minHeight="10.0" minWidth="10.0">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#edit" text="Edytuj" VBox.vgrow="ALWAYS" />
+            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#edit" text="Edytuj" VBox.vgrow="ALWAYS">
+               <graphic>
+                  <ImageView fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/png/edit-32.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Usuń" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
