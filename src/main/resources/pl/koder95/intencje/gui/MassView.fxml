@@ -25,7 +25,6 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="removeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Usuń" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>

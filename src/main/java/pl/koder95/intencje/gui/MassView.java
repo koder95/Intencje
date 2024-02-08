@@ -21,31 +21,15 @@ public class MassView {
     private Label chapel;
     @FXML
     private WebView content;
-    @FXML
-    private Button removeButton;
 
-    private final ObjectProperty<EventHandler<ActionEvent>> onRemove = new SimpleObjectProperty<>();
     private final ObjectProperty<MassInfo> massInfo = new SimpleObjectProperty<>();
 
     public void initialize() {
         massInfo.set(new MassInfo());
 
-        onRemove.bindBidirectional(removeButton.onActionProperty());
         time.textProperty().bind(getMassInfo().timeProperty().map(t -> t.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))));
         chapel.textProperty().bind(getMassInfo().chapelProperty());
         getMassInfo().intentionsProperty().subscribe(s -> content.getEngine().loadContent(s));
-    }
-
-    public EventHandler<ActionEvent> getOnRemove() {
-        return onRemove.get();
-    }
-
-    public ObjectProperty<EventHandler<ActionEvent>> onRemoveProperty() {
-        return onRemove;
-    }
-
-    public void setOnRemove(EventHandler<ActionEvent> onRemove) {
-        this.onRemove.set(onRemove);
     }
 
     public MassInfo getMassInfo() {
