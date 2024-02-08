@@ -1,6 +1,7 @@
 package pl.koder95.intencje.gui;
 
 import com.dlsc.gemsfx.TimePicker;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -47,5 +48,17 @@ public class MassEditorPane {
 
     public StringProperty chapelProperty() {
         return chapel.textProperty();
+    }
+
+    public void setTimePickerDisable(boolean timePickerDisable) {
+        timePickerDisableProperty().set(timePickerDisable);
+    }
+
+    public boolean isTimePickerDisable() {
+        return timePickerDisableProperty().get();
+    }
+
+    public BooleanProperty timePickerDisableProperty() {
+        return mass.disableProperty();
     }
 }

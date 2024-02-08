@@ -21,8 +21,12 @@ class MassEditor extends Stage {
         return INSTANCE;
     }
 
+    public static void edit(MassInfo info, boolean timeDisable) {
+        get().showAndEdit(info, timeDisable);
+    }
+
     public static void edit(MassInfo info) {
-        get().showAndEdit(info);
+        edit(info, false);
     }
 
     private final MassEditorPane controller;
@@ -40,10 +44,11 @@ class MassEditor extends Stage {
         }
     }
 
-    private synchronized void showAndEdit(MassInfo result) {
+    private synchronized void showAndEdit(MassInfo result, boolean timeDisable) {
         ObjectProperty<LocalTime> time = result.timeProperty();
         StringProperty chapel = result.chapelProperty();
         StringProperty content = result.intentionsProperty();
+        controller.setTimePickerDisable(timeDisable);
         controller.massTimeProperty().set(time.get());
         controller.chapelProperty().set(chapel.get());
         controller.contentProperty().set(content.get());
