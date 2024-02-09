@@ -31,15 +31,11 @@ public class Intention implements pl.koder95.intencje.core.Intention {
         if (!isAlive())
             throw new SQLException("Nie można zmienić czasu odprawienia Mszy, ponieważ ten obiekt jest martwy. " +
                     "Należy stworzyć nowy obiekt.");
-        try (Connection conn = DB.conn()) {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
-            pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
-            ResultSet results = pstmt.executeQuery();
-            if (results.next()) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
-                    " jest już zapisana intencja. Najpierw zmień ją albo usuń.");
-            else {
-                pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
+        if (exists(massTime)) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
+                " jest już zapisana intencja. Najpierw ją usuń.");
+        else {
+            try (Connection conn = DB.conn()) {
+                PreparedStatement pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
                         "SET `msza` = ? WHERE `msza` = ?");
                 pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
                 pstmt.setTimestamp(2, Timestamp.valueOf(this.massTime));
@@ -191,6 +187,16 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? new Intention(results) : null;
+        }
+    }
+
+    public static boolean exists(LocalDateTime massTime) throws SQLException {
+        try (Connection conn = DB.conn()) {
+            PreparedStatement ps = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
+                    "` WHERE `msza` = ? LIMIT 1");
+            ps.setTimestamp(1, Timestamp.valueOf(massTime));
+            ResultSet results = ps.executeQuery();
+            return results.next();
         }
     }
 
