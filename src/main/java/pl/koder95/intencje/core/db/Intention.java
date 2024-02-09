@@ -152,7 +152,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             try (Connection conn = DB.conn()) {
                 PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `" + TABLE_NAME + "` " +
                         " WHERE `msza` = ?");
-                pstmt.setTimestamp(3, Timestamp.valueOf(massTime));
+                pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
                 pstmt.execute();
                 ResultSet results = pstmt.getResultSet();
                 if (results.first()) {
