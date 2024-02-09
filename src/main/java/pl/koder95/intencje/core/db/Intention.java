@@ -39,13 +39,9 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                         "SET `msza` = ? WHERE `msza` = ?");
                 pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
                 pstmt.setTimestamp(2, Timestamp.valueOf(this.massTime));
-                pstmt.execute();
-                results = pstmt.getResultSet();
-                if (results.next()) {
-                    int count = results.getInt(0);
-                    System.out.println("Updated rows: " + count);
-                    if (count == 0) return;
-                }
+                int count = pstmt.executeUpdate();
+                System.out.println("Updated rows: " + count);
+                if (count == 0) return;
                 this.massTime = Objects.requireNonNull(massTime);
             }
         }
@@ -69,12 +65,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "SET `kaplica` = ? WHERE `msza` = ?");
             pstmt.setString(1, chapel);
             pstmt.setTimestamp(2, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.next()) {
-                int count = results.getInt(0);
-                System.out.println("Updated rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Updated rows: " + count);
         }
     }
 
@@ -96,12 +88,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "SET `kaplica` = ?, `intencja` = ? WHERE `msza` = ?");
             pstmt.setString(1, content);
             pstmt.setTimestamp(2, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
-                int count = results.getInt(0);
-                System.out.println("Updated rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Updated rows: " + count);
         }
     }
 
@@ -115,12 +103,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             pstmt.setString(1, i.getChapel());
             pstmt.setString(2, i.getContent());
             pstmt.setTimestamp(3, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
-                int count = results.getInt(0);
-                System.out.println("Sync rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Sync rows: " + count);
         }
     }
 
@@ -149,13 +133,9 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                 PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `" + TABLE_NAME + "` " +
                         " WHERE `msza` = ?");
                 pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
-                pstmt.execute();
-                ResultSet results = pstmt.getResultSet();
-                if (results.first()) {
-                    int count = results.getInt(0);
-                    System.out.println("Delete rows: " + count);
-                }
-                massTime = null;
+                int count = pstmt.executeUpdate();
+                System.out.println("Delete rows: " + count);
+                if (count > 0) massTime = null;
             }
         }
     }
