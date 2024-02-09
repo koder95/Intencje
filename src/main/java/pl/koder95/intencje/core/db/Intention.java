@@ -55,7 +55,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public String getChapel() throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `kaplica` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? results.getString("kaplica") : null;
@@ -82,7 +82,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public String getContent() throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `intencja` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? results.getString("intencja") : null;
@@ -183,7 +183,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public static Intention get(LocalDateTime massTime) throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? new Intention(results) : null;
