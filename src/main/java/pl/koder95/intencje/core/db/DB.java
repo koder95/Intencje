@@ -21,12 +21,18 @@ public class DB {
     private static ConnectionTester TESTER = null;
     private DB() {}
 
+    private static String url(String driver, String hostname, String dbName) {
+        if (driver == null || hostname == null || dbName == null) {
+            throw new IllegalStateException("The connection has not been configured yet");
+        }
+        return "jdbc:" + driver + "://" + hostname + "/" + dbName;
+    }
+
     private static String url() {
         if (!CONN_PROP.containsKey("driver") || !CONN_PROP.containsKey("hostname") || !CONN_PROP.containsKey("dbName")) {
             throw new IllegalStateException("The connection has not been configured yet");
         }
-        return "jdbc:" + CONN_PROP.getProperty("driver") + "://"
-                + CONN_PROP.getProperty("hostname") + "/" + CONN_PROP.getProperty("dbName");
+        return url(CONN_PROP.getProperty("driver"), CONN_PROP.getProperty("hostname"), CONN_PROP.getProperty("dbName"));
     }
 
     static Connection conn() throws SQLException {
