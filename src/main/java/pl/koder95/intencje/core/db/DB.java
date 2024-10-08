@@ -72,7 +72,7 @@ public class DB {
     }
     
     private static ConnectionTester.Test LAST_TEST = null;
-    private static ConnectionTester.DatabaseTableNamespace LAST_FOUND_NAMESPACE = null;
+    private static Namespace LAST_FOUND_NAMESPACE = null;
 
     static void test(ConnectionTester tester) {
         tester.test(new ConnectionTestingEvent(DB.class));
