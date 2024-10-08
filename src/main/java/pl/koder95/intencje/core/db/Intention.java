@@ -31,25 +31,17 @@ public class Intention implements pl.koder95.intencje.core.Intention {
         if (!isAlive())
             throw new SQLException("Nie można zmienić czasu odprawienia Mszy, ponieważ ten obiekt jest martwy. " +
                     "Należy stworzyć nowy obiekt.");
-        try (Connection conn = DB.conn()) {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
-            pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
-            ResultSet results = pstmt.executeQuery();
-            if (results.next()) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
-                    " jest już zapisana intencja. Najpierw zmień ją albo usuń.");
-            else {
-                pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
+        if (exists(massTime)) throw new SQLException("Nie można zmienić czasu odprawienia Mszy. W tym samym czasie" +
+                " jest już zapisana intencja. Najpierw ją usuń.");
+        else {
+            try (Connection conn = DB.conn()) {
+                PreparedStatement pstmt = conn.prepareStatement("UPDATE `" + TABLE_NAME + "` " +
                         "SET `msza` = ? WHERE `msza` = ?");
                 pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
                 pstmt.setTimestamp(2, Timestamp.valueOf(this.massTime));
-                pstmt.execute();
-                results = pstmt.getResultSet();
-                if (results.next()) {
-                    int count = results.getInt(0);
-                    System.out.println("Updated rows: " + count);
-                    if (count == 0) return;
-                }
+                int count = pstmt.executeUpdate();
+                System.out.println("Updated rows: " + count);
+                if (count == 0) return;
                 this.massTime = Objects.requireNonNull(massTime);
             }
         }
@@ -59,7 +51,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public String getChapel() throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `kaplica` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? results.getString("kaplica") : null;
@@ -73,12 +65,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "SET `kaplica` = ? WHERE `msza` = ?");
             pstmt.setString(1, chapel);
             pstmt.setTimestamp(2, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.next()) {
-                int count = results.getInt(0);
-                System.out.println("Updated rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Updated rows: " + count);
         }
     }
 
@@ -86,7 +74,7 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public String getContent() throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `intencja` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? results.getString("intencja") : null;
@@ -100,12 +88,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
                     "SET `kaplica` = ?, `intencja` = ? WHERE `msza` = ?");
             pstmt.setString(1, content);
             pstmt.setTimestamp(2, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
-                int count = results.getInt(0);
-                System.out.println("Updated rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Updated rows: " + count);
         }
     }
 
@@ -119,12 +103,8 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             pstmt.setString(1, i.getChapel());
             pstmt.setString(2, i.getContent());
             pstmt.setTimestamp(3, Timestamp.valueOf(massTime));
-            pstmt.execute();
-            ResultSet results = pstmt.getResultSet();
-            if (results.first()) {
-                int count = results.getInt(0);
-                System.out.println("Sync rows: " + count);
-            }
+            int count = pstmt.executeUpdate();
+            System.out.println("Sync rows: " + count);
         }
     }
 
@@ -152,14 +132,10 @@ public class Intention implements pl.koder95.intencje.core.Intention {
             try (Connection conn = DB.conn()) {
                 PreparedStatement pstmt = conn.prepareStatement("DELETE FROM `" + TABLE_NAME + "` " +
                         " WHERE `msza` = ?");
-                pstmt.setTimestamp(3, Timestamp.valueOf(massTime));
-                pstmt.execute();
-                ResultSet results = pstmt.getResultSet();
-                if (results.first()) {
-                    int count = results.getInt(0);
-                    System.out.println("Delete rows: " + count);
-                }
-                massTime = null;
+                pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
+                int count = pstmt.executeUpdate();
+                System.out.println("Delete rows: " + count);
+                if (count > 0) massTime = null;
             }
         }
     }
@@ -187,10 +163,20 @@ public class Intention implements pl.koder95.intencje.core.Intention {
     public static Intention get(LocalDateTime massTime) throws SQLException {
         try (Connection conn = DB.conn()) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
-                    "` WHERE `msza` = ?");
+                    "` WHERE `msza` = ? LIMIT 1");
             pstmt.setTimestamp(1, Timestamp.valueOf(massTime));
             ResultSet results = pstmt.executeQuery();
             return results.next()? new Intention(results) : null;
+        }
+    }
+
+    public static boolean exists(LocalDateTime massTime) throws SQLException {
+        try (Connection conn = DB.conn()) {
+            PreparedStatement ps = conn.prepareStatement("SELECT `msza` FROM `" + TABLE_NAME +
+                    "` WHERE `msza` = ? LIMIT 1");
+            ps.setTimestamp(1, Timestamp.valueOf(massTime));
+            ResultSet results = ps.executeQuery();
+            return results.next();
         }
     }
 

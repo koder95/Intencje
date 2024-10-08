@@ -9,8 +9,8 @@ public class RealDayName extends VirtualDayName {
     private final pl.koder95.intencje.core.db.DayName dbInstance;
 
     public RealDayName(pl.koder95.intencje.core.db.DayName dbInstance) throws Exception {
+        super(dbInstance.getDate(), dbInstance.getName());
         this.dbInstance = dbInstance;
-        update();
     }
 
     /**

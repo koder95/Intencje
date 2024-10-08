@@ -51,7 +51,7 @@ public class ConnectionTester {
         return maker.getConnectionTest();
     }
 
-    public DatabaseTableNamespace getDatabaseTableNamespace() {
+    public Namespace getDatabaseTableNamespace() {
         return maker.getDatabaseTableNamespace();
     }
 
@@ -97,33 +97,10 @@ public class ConnectionTester {
         }
     }
 
-    public static class DatabaseTableNamespace {
-
-        private final String prefix, intentionTableName, dayNameTableName;
-
-        public DatabaseTableNamespace(String prefix, String intentionTableName, String dayNameTableName) {
-            this.prefix = prefix;
-            this.intentionTableName = intentionTableName;
-            this.dayNameTableName = dayNameTableName;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public String getIntentionTableName() {
-            return intentionTableName;
-        }
-
-        public String getDayNameTableName() {
-            return dayNameTableName;
-        }
-    }
-
     private static class TestMaker {
 
         boolean internetConnection, domainNameResolvingCorrect, databaseServerConnection, databaseConfig;
-        String prefix, intentionTableName, dayNameTableName;
+        Namespace ns;
 
         private TestMaker() {}
 
@@ -185,13 +162,9 @@ public class ConnectionTester {
                         intentionTable = intentionTable.substring(1);
                         dayNameTable = dayNameTable.substring(1);
                     }
-                    this.prefix = prefix.toString();
-                    this.intentionTableName = intentionTable;
-                    this.dayNameTableName = dayNameTable;
+                    ns = Namespace.instanceOf(prefix.toString(), intentionTable, dayNameTable);
                 } else {
-                    this.prefix = null;
-                    this.intentionTableName = null;
-                    this.dayNameTableName = null;
+                    ns = null;
                 }
             } catch (SQLException e) {
                 databaseConfig = false;
@@ -203,14 +176,14 @@ public class ConnectionTester {
             return new Test(internetConnection, domainNameResolvingCorrect, databaseServerConnection, databaseConfig);
         }
 
-        DatabaseTableNamespace getDatabaseTableNamespace() {
-            return new DatabaseTableNamespace(prefix, intentionTableName, dayNameTableName);
+        Namespace getDatabaseTableNamespace() {
+            return ns;
         }
 
         TestMaker clear() {
             internetConnection = false; domainNameResolvingCorrect = false;
             databaseServerConnection = false; databaseConfig = false;
-            prefix = null; intentionTableName = null; dayNameTableName = null;
+            ns = null;
             return this;
         }
     }
