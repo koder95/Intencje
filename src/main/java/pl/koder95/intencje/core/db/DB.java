@@ -35,6 +35,10 @@ public class DB {
         return url(settings.getProperty(driverKey), settings.getProperty(hostnameKey), settings.getProperty(dbNameKey));
     }
 
+    private static String url(String hostname, String dbName) {
+        return url("mysql", hostname, dbName);
+    }
+
     public static List<String> tables(Connection conn) throws SQLException {
         Statement statement = conn.createStatement();
         statement.execute("SHOW TABLES;");
@@ -48,6 +52,13 @@ public class DB {
         return result;
     }
 
+    public static List<String> tables(Properties settings, String driverKey, String hostnameKey, String dbNameKey, String userKey, String passwordKey) throws SQLException {
+        if (settings != null && settings.containsKey(userKey) && settings.containsKey(passwordKey)) {
+            return tables(url(settings, driverKey, hostnameKey, dbNameKey), settings.getProperty(userKey), settings.getProperty(passwordKey));
+        }
+        else throw new IllegalStateException("The connection has not been configured yet");
+    }
+
     public static List<String> tables(String url, String user, String password) throws SQLException {
         user = user == null? "" : user;
         password = password == null? "" : password;
@@ -56,6 +67,10 @@ public class DB {
                 return tables(conn);
             }
         else throw new IllegalStateException("The connection has not been configured yet");
+    }
+
+    public static List<String> tables(String hostname, String dbName, String user, String password) throws SQLException {
+        return tables(url(hostname, dbName), user, password);
     }
 
     private static String url() {
@@ -76,16 +91,18 @@ public class DB {
     }
 
     public static List<String> tables() throws SQLException {
-        if (CONN != null && CONN_PROP.containsKey("user") && CONN_PROP.containsKey("password")) {
-            return tables(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
-        }
-        else throw new IllegalStateException("The connection has not been configured yet");
+        return tables(CONN_PROP, "driver", "hostname", "dbName", "user", "password");
     }
 
     public static void initConnectionProperties(Properties p) {
         CONN_PROP.clear();
         TESTER = null;
-        if (p != null) CONN_PROP.putAll(p);
+        if (p != null) {
+            CONN_PROP.putAll(p);
+            if (CONN_PROP.containsKey("hostname")) {
+                TESTER = new ConnectionTester(CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
+            }
+        }
     }
 
     public static String getTablePrefix() {
@@ -108,7 +125,8 @@ public class DB {
     public static boolean test() {
         if (TESTER == null && CONN_PROP.containsKey("hostname")) {
             TESTER = new ConnectionTester(CONN_PROP.getProperty("hostname"), DEFAULT_COMMON_SEARCH, DEFAULT_DAY_NAME_ENDING);
-        } else throw new IllegalStateException("The connection has not been configured yet");
+        }
+        if (TESTER == null) throw new IllegalStateException("The connection has not been configured yet");
         test(TESTER);
         return LAST_TEST.isDatabaseConfig();
     }
