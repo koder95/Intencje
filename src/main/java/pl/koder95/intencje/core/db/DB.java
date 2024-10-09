@@ -28,6 +28,29 @@ public class DB {
         return "jdbc:" + driver + "://" + hostname + "/" + dbName;
     }
 
+    public static List<String> tables(Connection conn) throws SQLException {
+        Statement test = conn.createStatement();
+        test.execute("SHOW TABLES;");
+        ResultSet resultSet = test.getResultSet();
+        List<String> tables = new LinkedList<>();
+        while (resultSet.next()) {
+            tables.add(resultSet.getString(1));
+        }
+        ArrayList<String> result = new ArrayList<>(tables);
+        tables.clear();
+        return result;
+    }
+
+    public static List<String> tables(String url, String user, String password) throws SQLException {
+        user = user == null? "" : user;
+        password = password == null? "" : password;
+        if (!user.isEmpty() && !password.isEmpty())
+            try (Connection conn = DriverManager.getConnection(url, user, password)) {
+                return tables(conn);
+            }
+        else throw new IllegalStateException("The connection has not been configured yet");
+    }
+
     private static String url() {
         if (!CONN_PROP.containsKey("driver") || !CONN_PROP.containsKey("hostname") || !CONN_PROP.containsKey("dbName")) {
             throw new IllegalStateException("The connection has not been configured yet");
@@ -49,18 +72,10 @@ public class DB {
     }
 
     public static List<String> tables() throws SQLException {
-        try (Connection conn = DB.conn()) {
-            Statement test = conn.createStatement();
-            test.execute("SHOW TABLES;");
-            ResultSet resultSet = test.getResultSet();
-            List<String> tables = new LinkedList<>();
-            while (resultSet.next()) {
-                tables.add(resultSet.getString(1));
-            }
-            ArrayList<String> result = new ArrayList<>(tables);
-            tables.clear();
-            return result;
+        if (CONN != null && CONN_PROP.containsKey("user") && CONN_PROP.containsKey("password")) {
+            return tables(url(), CONN_PROP.getProperty("user"), CONN_PROP.getProperty("password"));
         }
+        else throw new IllegalStateException("The connection has not been configured yet");
     }
 
     public static void initConnectionProperties(Properties p) {
