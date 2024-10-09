@@ -28,10 +28,17 @@ public class DB {
         return "jdbc:" + driver + "://" + hostname + "/" + dbName;
     }
 
+    private static String url(Properties settings, String driverKey, String hostnameKey, String dbNameKey) {
+        if (settings == null || !settings.containsKey(driverKey) || !settings.containsKey(hostnameKey) || !settings.containsKey(dbNameKey)) {
+            throw new IllegalStateException("The connection has not been configured yet");
+        }
+        return url(settings.getProperty(driverKey), settings.getProperty(hostnameKey), settings.getProperty(dbNameKey));
+    }
+
     public static List<String> tables(Connection conn) throws SQLException {
-        Statement test = conn.createStatement();
-        test.execute("SHOW TABLES;");
-        ResultSet resultSet = test.getResultSet();
+        Statement statement = conn.createStatement();
+        statement.execute("SHOW TABLES;");
+        ResultSet resultSet = statement.getResultSet();
         List<String> tables = new LinkedList<>();
         while (resultSet.next()) {
             tables.add(resultSet.getString(1));
@@ -52,10 +59,7 @@ public class DB {
     }
 
     private static String url() {
-        if (!CONN_PROP.containsKey("driver") || !CONN_PROP.containsKey("hostname") || !CONN_PROP.containsKey("dbName")) {
-            throw new IllegalStateException("The connection has not been configured yet");
-        }
-        return url(CONN_PROP.getProperty("driver"), CONN_PROP.getProperty("hostname"), CONN_PROP.getProperty("dbName"));
+        return url(CONN_PROP, "driver", "hostname", "dbName");
     }
 
     static Connection conn() throws SQLException {
