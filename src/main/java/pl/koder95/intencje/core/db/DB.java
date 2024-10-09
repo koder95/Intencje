@@ -73,6 +73,14 @@ public class DB {
         return tables(url(hostname, dbName), user, password);
     }
 
+    public static void insertProperties(Properties settings, String hostname, String dbName, String user, String password) {
+        settings.setProperty("driver", "mysql");
+        settings.setProperty("hostname", hostname);
+        settings.setProperty("dbName", dbName);
+        settings.setProperty("user", user);
+        settings.setProperty("password", password);
+    }
+
     private static String url() {
         return url(CONN_PROP, "driver", "hostname", "dbName");
     }
